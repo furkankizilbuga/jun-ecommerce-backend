@@ -1,6 +1,6 @@
 package com.ecomm.jun.entity;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,7 +29,7 @@ public class Product {
     private Double rating;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    private Stock stock;
+    private Inventory inventory;
 
     @OneToMany(cascade = CascadeType.ALL)
     private Set<Comment> comments;
@@ -41,7 +41,7 @@ public class Product {
             CascadeType.REFRESH})
     @JoinTable(name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
-    @JsonManagedReference
+    @JsonBackReference
     private Set<Category> categories;
 
 }

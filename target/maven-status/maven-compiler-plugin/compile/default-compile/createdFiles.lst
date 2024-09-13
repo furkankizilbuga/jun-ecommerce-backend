@@ -1,1 +1,6 @@
+com\ecomm\jun\entity\Category.class
+com\ecomm\jun\entity\Comment.class
 com\ecomm\jun\JunApplication.class
+com\ecomm\jun\entity\Stock.class
+com\ecomm\jun\entity\Product.class
+com\ecomm\jun\entity\User.class
