@@ -10,6 +10,7 @@ public interface ProductService {
      Product findByName(String name);
      List<Product> findAll();
      Product findById(Long id);
+     List<Product> findUserProduct(Long userId);
      Product save(Product product);
      Product delete(Long id);
      //TODO - addStock

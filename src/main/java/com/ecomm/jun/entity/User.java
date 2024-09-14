@@ -41,11 +41,11 @@ public class User implements UserDetails {
     //        inverseJoinColumns = @JoinColumn(name = "product_id"))
     //private List<Product> cart;
 
-    //@ManyToMany(fetch = FetchType.EAGER)
-    //@JoinTable(name = "user_product",
-    //        joinColumns = @JoinColumn(name = "user_id"),
-    //        inverseJoinColumns = @JoinColumn(name = "product_id"))
-    //private List<Product> products;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_product",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id"))
+    private List<Product> products;
 
     //@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     //private List<Comment> comments;
