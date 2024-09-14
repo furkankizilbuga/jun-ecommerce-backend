@@ -31,8 +31,8 @@ public class Product {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private Inventory inventory;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private Set<Comment> comments;
+    //@OneToMany(cascade = CascadeType.ALL)
+    //private Set<Comment> comments;
 
     @ManyToMany(cascade = {
             CascadeType.DETACH,

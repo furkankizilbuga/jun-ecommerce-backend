@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,26 +35,26 @@ public class User implements UserDetails {
     @Column(name = "email")
     private String email;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_product_cart",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> cart;
+    //@ManyToMany(fetch = FetchType.EAGER)
+    //@JoinTable(name = "user_product_cart",
+    //        joinColumns = @JoinColumn(name = "user_id"),
+    //        inverseJoinColumns = @JoinColumn(name = "product_id"))
+    //private List<Product> cart;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_product",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private List<Product> products;
+    //@ManyToMany(fetch = FetchType.EAGER)
+    //@JoinTable(name = "user_product",
+    //        joinColumns = @JoinColumn(name = "user_id"),
+    //        inverseJoinColumns = @JoinColumn(name = "product_id"))
+    //private List<Product> products;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    private List<Comment> comments;
+    //@OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    //private List<Comment> comments;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_authority",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "authority_id"))
-    private List<Authority> authorities;
+    private List<Authority> authorities = new ArrayList<>();
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
