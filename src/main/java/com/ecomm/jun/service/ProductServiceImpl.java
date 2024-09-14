@@ -37,7 +37,6 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Product save(Product product) {
         return productRepository.save(product);
-        //TODO EĞER STOKTA ZATEN VARSA MIKTARI ARTTIRILMALI
     }
 
     @Override
