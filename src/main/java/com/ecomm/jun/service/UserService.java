@@ -10,7 +10,9 @@ public interface UserService extends UserDetailsService {
 
     List<UserDto> findAll();
     User findById(Long id);
+    User findByEmail(String email);
     UserDto save(User user);
     UserDto delete(Long id);
+    String getAuthenticatedEmail();
 
 }

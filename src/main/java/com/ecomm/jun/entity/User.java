@@ -1,6 +1,7 @@
 package com.ecomm.jun.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "user")
+@Table(name = "users")
 public class User implements UserDetails {
 
     @Id
@@ -24,15 +25,23 @@ public class User implements UserDetails {
     private Long id;
 
     @Column(name = "password")
+    @NotNull(message = "Password must be valid!")
+    @NotBlank(message = "Password cannot be empty!")
+    @Size(max = 25)
     private String password;
 
     @Column(name = "first_name")
+    @Size(max = 50)
     private String firstName;
 
     @Column(name = "last_name")
+    @Size(max = 75)
     private String lastName;
 
-    @Column(name = "email")
+    @Column(name = "email", unique = true)
+    @NotNull(message = "Email must be valid!")
+    @NotBlank(message = "Email cannot be empty!")
+    @Size(max = 150)
     private String email;
 
     //@ManyToMany(fetch = FetchType.EAGER)
@@ -57,9 +66,8 @@ public class User implements UserDetails {
     private List<Authority> authorities = new ArrayList<>();
 
     @Column(name = "created_at")
+    @NotNull
     private LocalDateTime createdAt;
-
-
 
 
     @Override

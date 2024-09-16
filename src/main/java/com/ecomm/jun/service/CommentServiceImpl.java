@@ -33,7 +33,10 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     public Comment save(Comment comment) {
-        //TODO GET CURRENT USER
+        String loggedEmail = userService.getAuthenticatedEmail();
+        User user = userService.findByEmail(loggedEmail);
+        comment.setUser(user);
+        comment.setCreatedAt(LocalDate.now());
         return commentRepository.save(comment);
     }
 

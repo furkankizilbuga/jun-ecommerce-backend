@@ -1,6 +1,7 @@
 package com.ecomm.jun.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "stock")
+@Table(name = "inventory")
 public class Inventory {
 
     @Id
@@ -25,6 +26,7 @@ public class Inventory {
     private Product product;
 
     @Column(name = "quantity")
+    @Min(value = 0, message = "Stock cannot go below zero!")
     private int quantity;
 
 }

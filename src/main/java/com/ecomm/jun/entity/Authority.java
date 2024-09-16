@@ -18,6 +18,11 @@ public class Authority implements GrantedAuthority {
 
     private Role authority;
 
+    @Override
+    public String getAuthority() {
+        return authority.name();
+    }
+
     //@ManyToMany(mappedBy = "authorities")
     //private List<User> users;
 }

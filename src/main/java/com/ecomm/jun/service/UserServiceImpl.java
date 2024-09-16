@@ -7,6 +7,8 @@ import com.ecomm.jun.exceptions.UserException;
 import com.ecomm.jun.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,13 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() ->
+                        new UserException("User with given email could not be found!", HttpStatus.NOT_FOUND));
+    }
+
+    @Override
     public UserDto save(User user) {
         User savedUser = userRepository.save(user);
         return DtoConvertor.userDtoConvertor(savedUser);
@@ -53,6 +62,12 @@ public class UserServiceImpl implements UserService{
             return DtoConvertor.userDtoConvertor(user.get());
         }
         throw new UserException("User with given ID could not be found!", HttpStatus.NOT_FOUND);
+    }
+
+    @Override
+    public String getAuthenticatedEmail() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
     }
 
     @Override

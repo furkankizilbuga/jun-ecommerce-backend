@@ -3,6 +3,9 @@ package com.ecomm.jun.entity;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,6 +24,9 @@ public class Category {
     private Long id;
 
     @Column(name = "name")
+    @Size(max = 25)
+    @NotBlank(message = "Category name cannot be blank!")
+    @NotNull(message = "Category name must be valid!")
     private String name;
 
     @ManyToMany(cascade = CascadeType.ALL)
