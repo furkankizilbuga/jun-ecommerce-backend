@@ -28,8 +28,8 @@ public class Product {
     @Column(name = "rating")
     private Double rating;
 
-    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
-    private Inventory inventory;
+    //@OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
+    //private Inventory inventory;
 
     //@OneToMany(cascade = CascadeType.ALL)
     //private Set<Comment> comments;

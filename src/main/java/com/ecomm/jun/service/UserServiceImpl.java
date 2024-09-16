@@ -31,10 +31,10 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserDto findById(Long id) {
+    public User findById(Long id) {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
-            return DtoConvertor.userDtoConvertor(user.get());
+            return user.get();
         }
         throw new UserException("User with given ID could not be found!", HttpStatus.NOT_FOUND);
     }

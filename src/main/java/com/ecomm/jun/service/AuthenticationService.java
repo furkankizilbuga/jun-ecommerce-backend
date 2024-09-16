@@ -1,10 +1,10 @@
 package com.ecomm.jun.service;
 
-import com.ecomm.jun.dto.DtoConvertor;
-import com.ecomm.jun.dto.UserDto;
 import com.ecomm.jun.entity.Authority;
+import com.ecomm.jun.entity.Role;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.exceptions.UserException;
+import com.ecomm.jun.repository.AuthorityRepository;
 import com.ecomm.jun.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,28 +20,37 @@ import java.util.Optional;
 public class AuthenticationService {
 
     private UserRepository userRepository;
+    private AuthorityRepository authorityRepository;
     private PasswordEncoder passwordEncoder;
 
-    public UserDto register(String email, String password) {
-        Optional<User> userOptional = userRepository.findByEmail(email);
+    public void register(User requestedUser) {
+        Optional<User> userOptional = userRepository.findByEmail(requestedUser.getEmail());
 
         if(userOptional.isPresent()) {
             throw new UserException("User with given email already exists!", HttpStatus.BAD_REQUEST);
         }
 
-        String encodedPassword = passwordEncoder.encode(password);
+        String encodedPassword = passwordEncoder.encode(requestedUser.getPassword());
 
         List<Authority> authorities = new ArrayList<>();
 
-        //TODO Authority'ler önden tanımlı olcak. Burada sadece ADD'lenecek.
-        //TODO Aynı zamanda authority'deki users list'ine de kullanıcı eklenecek.
+        Optional<Authority> authority = authorityRepository.findByAuthority(Role.USER);
+
+        if(authority.isEmpty()) {
+            Authority userRole = new Authority();
+            userRole.setAuthority(Role.USER);
+            authorityRepository.save(userRole);
+            authorities.add(userRole);
+        } else {
+            authorities.add(authority.get());
+        }
 
         User user = new User();
-        user.setEmail(email);
+        user.setEmail(requestedUser.getEmail());
         user.setPassword(encodedPassword);
         user.setAuthorities(authorities);
 
-        return DtoConvertor.userDtoConvertor(userRepository.save(user));
+        userRepository.save(user);
     }
 
 

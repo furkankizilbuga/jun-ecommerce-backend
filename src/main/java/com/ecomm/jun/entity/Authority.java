@@ -15,8 +15,9 @@ public class Authority implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String authority;
 
-    @ManyToMany(mappedBy = "authorities")
-    private List<User> users;
+    private Role authority;
+
+    //@ManyToMany(mappedBy = "authorities")
+    //private List<User> users;
 }

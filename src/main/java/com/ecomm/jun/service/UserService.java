@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService extends UserDetailsService {
 
     List<UserDto> findAll();
-    UserDto findById(Long id);
+    User findById(Long id);
     UserDto save(User user);
     UserDto delete(Long id);
 
