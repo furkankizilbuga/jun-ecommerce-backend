@@ -1,6 +1,7 @@
 package com.ecomm.jun.service;
 
 import com.ecomm.jun.entity.Category;
+import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.CategoryException;
 import com.ecomm.jun.repository.CategoryRepository;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
+    private ProductService productService;
 
 
     @Override
@@ -35,6 +37,11 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public Category delete(Long id) {
-        return null;
+        Category category = findById(id);
+        for(Product product : category.getProducts()) {
+            product.getCategories().remove(category);
+        }
+        categoryRepository.delete(category);
+        return category;
     }
 }

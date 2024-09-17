@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.exceptions.UserException;
 import com.ecomm.jun.repository.UserRepository;
@@ -14,14 +15,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService{
 
     private UserRepository userRepository;
-    private ProductService productService;
 
     @Override
     public List<User> findAll() {
@@ -42,6 +41,11 @@ public class UserServiceImpl implements UserService{
         return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UserException("User with given email could not be found!", HttpStatus.NOT_FOUND));
+    }
+
+    @Override
+    public List<Product> findUserProducts(Long userId) {
+        return userRepository.findUserProducts(userId);
     }
 
     @Transactional

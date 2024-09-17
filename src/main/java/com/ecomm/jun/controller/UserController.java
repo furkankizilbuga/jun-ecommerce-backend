@@ -2,8 +2,10 @@ package com.ecomm.jun.controller;
 
 import com.ecomm.jun.dto.DtoConvertor;
 import com.ecomm.jun.dto.UserDto;
+import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/findbyemail")
-    public UserDto findByEmail(@RequestHeader String email) {
+    public UserDto findByEmail(@Valid @RequestHeader String email) {
         return DtoConvertor.userDtoConvertor(userService.findByEmail(email));
     }
 
@@ -40,8 +42,13 @@ public class UserController {
         return userService.getAuthenticatedEmail();
     }
 
+    @GetMapping("/products")
+    public List<Product> findUserProduct(Long userId) {
+        return userService.findUserProducts(userId);
+    }
+
     @PostMapping("/save")
-    public UserDto saveUser(@RequestBody User user) {
+    public UserDto saveUser(@Valid @RequestBody User user) {
         return DtoConvertor.userDtoConvertor(userService.save(user));
     }
 

@@ -1,0 +1,38 @@
+package com.ecomm.jun.controller;
+
+import com.ecomm.jun.entity.Category;
+import com.ecomm.jun.entity.Product;
+import com.ecomm.jun.service.CategoryService;
+import com.ecomm.jun.service.ProductService;
+import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/category")
+@AllArgsConstructor
+public class CategoryController {
+
+    private CategoryService categoryService;
+
+    @GetMapping
+    public List<Category> findAll() {
+        return categoryService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public Category findById(@PathVariable Long id) {
+        return categoryService.findById(id);
+    }
+
+    @PostMapping
+    public Category save(@RequestBody Category category) {
+        return categoryService.save(category);
+    }
+
+    @DeleteMapping("/{id}")
+    public Category delete(@PathVariable Long id) {
+        return categoryService.delete(id);
+    }
+}

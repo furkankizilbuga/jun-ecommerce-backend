@@ -36,10 +36,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity.csrf(AbstractHttpConfigurer::disable)
+        return httpSecurity
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/jun/user").permitAll()
-                            .anyRequest().authenticated();
+                    auth.requestMatchers("/**").permitAll();
+                    auth.requestMatchers("/user/**").permitAll();
+                    auth.requestMatchers("/user/**").permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults())

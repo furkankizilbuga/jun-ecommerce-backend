@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.ProductException;
 import com.ecomm.jun.repository.ProductRepository;
@@ -34,10 +35,6 @@ public class ProductServiceImpl implements ProductService{
                         new ProductException("Product with given ID could not be found!", HttpStatus.NOT_FOUND));
     }
 
-    @Override
-    public List<Product> findUserProduct(Long userId) {
-        return productRepository.findUserProducts(userId);
-    }
 
     @Override
     public Product save(Product product) {
@@ -46,8 +43,11 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product delete(Long id) {
-        Product deleted = findById(id);
-        productRepository.delete(deleted);
-        return deleted;
+        Product product = findById(id);
+        for(Category category : product.getCategories()) {
+            category.getProducts().remove(product);
+        }
+        productRepository.delete(product);
+        return product;
     }
 }
