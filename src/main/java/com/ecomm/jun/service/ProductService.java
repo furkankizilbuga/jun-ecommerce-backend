@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Product;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public interface ProductService {
      Product findByName(String name);
      List<Product> findAll();
      Product findById(Long id);
-     Product save(Product product);
+     Product save(ProductRequest product, Long categoryId);
      Product delete(Long id);
      //TODO - addStock
 

@@ -1,5 +1,6 @@
 package com.ecomm.jun.controller;
 
+import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.service.CategoryService;
@@ -16,7 +17,6 @@ import java.util.List;
 public class ProductController {
 
     private ProductService productService;
-    private CategoryService categoryService;
 
     @GetMapping
     public List<Product> findAll() {
@@ -34,11 +34,8 @@ public class ProductController {
     }
 
     @PostMapping("/{categoryId}/products")
-    public Product save(@Valid @RequestBody Product product, @PathVariable Long categoryId) {
-        Category category = categoryService.findById(categoryId);
-        category.getProducts().add(product);
-        product.getCategories().add(category);
-        return productService.save(product);
+    public Product save(@Valid @RequestBody ProductRequest request, @PathVariable Long categoryId) {
+        return productService.save(request, categoryId);
     }
 
     @DeleteMapping("/{categoryId}/products/{id}")

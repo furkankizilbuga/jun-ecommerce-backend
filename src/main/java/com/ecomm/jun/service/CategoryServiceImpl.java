@@ -16,7 +16,6 @@ import java.util.List;
 public class CategoryServiceImpl implements CategoryService {
 
     private CategoryRepository categoryRepository;
-    private ProductService productService;
 
 
     @Override

@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.ProductException;
@@ -15,6 +16,7 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService{
 
     private ProductRepository productRepository;
+    private CategoryService categoryService;
 
     @Override
     public Product findByName(String name) {
@@ -37,7 +39,16 @@ public class ProductServiceImpl implements ProductService{
 
 
     @Override
-    public Product save(Product product) {
+    public Product save(ProductRequest request, Long categoryId) {
+        Category category = categoryService.findById(categoryId);
+
+        Product product = new Product();
+        product.setName(request.name());
+        product.setImagePath(request.imagePath());
+        product.getCategories().add(category);
+
+        category.getProducts().add(product);
+
         return productRepository.save(product);
     }
 
