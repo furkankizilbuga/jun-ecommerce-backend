@@ -1,10 +1,9 @@
 package com.ecomm.jun.service;
 
-import com.ecomm.jun.dto.DtoConvertor;
-import com.ecomm.jun.dto.UserDto;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.exceptions.UserException;
 import com.ecomm.jun.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -25,11 +24,8 @@ public class UserServiceImpl implements UserService{
     private ProductService productService;
 
     @Override
-    public List<UserDto> findAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(DtoConvertor::userDtoConvertor)
-                .collect(Collectors.toList());
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     @Override
@@ -48,18 +44,19 @@ public class UserServiceImpl implements UserService{
                         new UserException("User with given email could not be found!", HttpStatus.NOT_FOUND));
     }
 
+    @Transactional
     @Override
-    public UserDto save(User user) {
-        User savedUser = userRepository.save(user);
-        return DtoConvertor.userDtoConvertor(savedUser);
+    public User save(User user) {
+        return userRepository.save(user);
     }
 
+    @Transactional
     @Override
-    public UserDto delete(Long id) {
+    public User delete(Long id) {
         Optional<User> user = userRepository.findById(id);
         if(user.isPresent()) {
             userRepository.delete(user.get());
-            return DtoConvertor.userDtoConvertor(user.get());
+            return user.get();
         }
         throw new UserException("User with given ID could not be found!", HttpStatus.NOT_FOUND);
     }
