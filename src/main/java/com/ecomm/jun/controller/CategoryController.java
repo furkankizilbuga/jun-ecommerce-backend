@@ -1,5 +1,6 @@
 package com.ecomm.jun.controller;
 
+import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.service.CategoryService;
@@ -27,7 +28,7 @@ public class CategoryController {
     }
 
     @PostMapping
-    public Category save(@RequestBody Category category) {
+    public Category save(@RequestBody CategoryRequest category) {
         return categoryService.save(category);
     }
 
@@ -36,3 +37,8 @@ public class CategoryController {
         return categoryService.delete(id);
     }
 }
+
+//{
+//    "email": "test@test.com",
+//    "password": "1234643"
+//}

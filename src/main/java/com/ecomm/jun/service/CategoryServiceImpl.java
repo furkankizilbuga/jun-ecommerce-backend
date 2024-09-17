@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.CategoryException;
@@ -31,7 +32,9 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public Category save(Category category) {
+    public Category save(CategoryRequest request) {
+        Category category = new Category();
+        category.setName(request.name());
         return categoryRepository.save(category);
     }
 
