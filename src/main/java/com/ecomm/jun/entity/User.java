@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     @NotNull(message = "Password must be valid!")
     @NotBlank(message = "Password cannot be empty!")
-    @Size(max = 25)
+    @Size(max = 150, min = 6, message = "Password must be between 6 and 25 characters!")
     private String password;
 
     @Column(name = "first_name")

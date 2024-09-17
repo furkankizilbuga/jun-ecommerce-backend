@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@ControllerAdvice
 @RequestMapping("/user")
 @AllArgsConstructor
 public class UserController {

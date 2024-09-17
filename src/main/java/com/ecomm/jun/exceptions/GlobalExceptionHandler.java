@@ -35,6 +35,12 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<ExceptionResponse> exceptionHandler(InventoryException exception) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getLocalizedMessage(), exception.getHttpStatus(), LocalDateTime.now());
+        return new ResponseEntity<>(exceptionResponse, exceptionResponse.getHttpStatus());
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ExceptionResponse> exceptionHandler(Exception exception) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(exception.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR, LocalDateTime.now());
         return new ResponseEntity<>(exceptionResponse, exceptionResponse.getHttpStatus());

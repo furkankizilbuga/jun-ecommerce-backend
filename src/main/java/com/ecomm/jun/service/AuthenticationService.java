@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.dto.UserRequest;
 import com.ecomm.jun.entity.Authority;
 import com.ecomm.jun.entity.Role;
 import com.ecomm.jun.entity.User;
@@ -11,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +25,7 @@ public class AuthenticationService {
     private AuthorityRepository authorityRepository;
     private PasswordEncoder passwordEncoder;
 
-    public void register(User requestedUser) {
+    public void register(UserRequest requestedUser) {
         Optional<User> userOptional = userRepository.findByEmail(requestedUser.getEmail());
 
         if(userOptional.isPresent()) {
@@ -48,6 +50,7 @@ public class AuthenticationService {
         User user = new User();
         user.setEmail(requestedUser.getEmail());
         user.setPassword(encodedPassword);
+        user.setCreatedAt(LocalDateTime.now());
         user.setAuthorities(authorities);
 
         userRepository.save(user);
