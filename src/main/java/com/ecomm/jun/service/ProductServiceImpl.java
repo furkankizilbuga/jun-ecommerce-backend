@@ -1,10 +1,12 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.ProductException;
 import com.ecomm.jun.repository.ProductRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -37,27 +39,26 @@ public class ProductServiceImpl implements ProductService{
                         new ProductException("Product with given ID could not be found!", HttpStatus.NOT_FOUND));
     }
 
-
+    @Transactional
     @Override
-    public Product save(ProductRequest request, Long categoryId) {
-        Category category = categoryService.findById(categoryId);
+    public Product save(ProductRequest request) {
 
         Product product = new Product();
         product.setName(request.name());
         product.setImagePath(request.imagePath());
-        product.getCategories().add(category);
 
-        category.getProducts().add(product);
+        for(Long categoryId : request.categoryIds()) {
+            Category category = categoryService.findById(categoryId);
+            category.getProducts().add(product);
+        }
 
         return productRepository.save(product);
     }
 
+    @Transactional
     @Override
     public Product delete(Long id) {
         Product product = findById(id);
-        for(Category category : product.getCategories()) {
-            category.getProducts().remove(product);
-        }
         productRepository.delete(product);
         return product;
     }

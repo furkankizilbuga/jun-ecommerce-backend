@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -29,9 +30,16 @@ public class Category {
     @NotNull(message = "Category name must be valid!")
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinTable(name = "product_category",
             joinColumns = @JoinColumn(name = "category_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
     @JsonManagedReference
-    private Set<Product> products;
+    private Set<Product> products = new HashSet<>();
+
+    public void addProduct(Product product) {
+        if (product != null) {
+            products.add(product);
+            product.getCategories().add(this);
+        }
+    }
 }

@@ -5,6 +5,7 @@ import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.CategoryException;
 import com.ecomm.jun.repository.CategoryRepository;
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ public class CategoryServiceImpl implements CategoryService {
                         new CategoryException("A category with given ID could not be found!", HttpStatus.NOT_FOUND));
     }
 
+    @Transactional
     @Override
     public Category save(CategoryRequest request) {
         Category category = new Category();
@@ -37,12 +39,13 @@ public class CategoryServiceImpl implements CategoryService {
         return categoryRepository.save(category);
     }
 
+    @Transactional
     @Override
     public Category delete(Long id) {
         Category category = findById(id);
-        for(Product product : category.getProducts()) {
+        /*for(Product product : category.getProducts()) {
             product.getCategories().remove(category);
-        }
+        }*/
         categoryRepository.delete(category);
         return category;
     }

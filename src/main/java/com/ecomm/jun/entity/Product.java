@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -49,6 +50,13 @@ public class Product {
     @JoinTable(name = "product_category",
             joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "category_id"))
     @JsonBackReference
-    private Set<Category> categories;
+    private Set<Category> categories = new HashSet<>();
+
+    public void addCategory(Category category) {
+        if (category != null) {
+            categories.add(category);
+            category.getProducts().add(this);
+        }
+    }
 
 }

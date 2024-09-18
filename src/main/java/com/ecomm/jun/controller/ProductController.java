@@ -1,9 +1,7 @@
 package com.ecomm.jun.controller;
 
 import com.ecomm.jun.dto.ProductRequest;
-import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
-import com.ecomm.jun.service.CategoryService;
 import com.ecomm.jun.service.ProductService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -33,9 +31,9 @@ public class ProductController {
         return productService.findById(id);
     }
 
-    @PostMapping("/{categoryId}/products")
-    public Product save(@Valid @RequestBody ProductRequest request, @PathVariable Long categoryId) {
-        return productService.save(request, categoryId);
+    @PostMapping
+    public Product save(@Valid @RequestBody ProductRequest request) {
+        return productService.save(request);
     }
 
     @DeleteMapping("/{categoryId}/products/{id}")

@@ -13,6 +13,11 @@ public class InventoryController {
 
     private InventoryService inventoryService;
 
+    @GetMapping("/{productId}")
+    public Inventory getInventory(@PathVariable Long productId) {
+        return inventoryService.getInventory(productId);
+    }
+
     @PutMapping("/{productId}")
     public Inventory update(@PathVariable Long productId, @RequestBody InventoryRequest request) {
         return inventoryService.update(productId, request.quantity());

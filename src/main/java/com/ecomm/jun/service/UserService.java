@@ -1,5 +1,6 @@
 package com.ecomm.jun.service;
 
+import com.ecomm.jun.dto.EmailRequest;
 import com.ecomm.jun.dto.UserDto;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
@@ -11,6 +12,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> findAll();
     User findById(Long id);
+    User findByEmail(EmailRequest email);
     User findByEmail(String email);
     List<Product> findUserProducts(Long userId);
     User save(User user);

@@ -1,6 +1,7 @@
 package com.ecomm.jun.controller;
 
 import com.ecomm.jun.dto.DtoConvertor;
+import com.ecomm.jun.dto.EmailRequest;
 import com.ecomm.jun.dto.UserDto;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
@@ -32,13 +33,14 @@ public class UserController {
     }
 
     @GetMapping("/findbyemail")
-    public UserDto findByEmail(@Valid @RequestHeader String email) {
+    public UserDto findByEmail(@Valid @RequestBody EmailRequest email) {
         return DtoConvertor.userDtoConvertor(userService.findByEmail(email));
     }
 
     @GetMapping("/email")
     public String getAuthenticatedEmail() {
         return userService.getAuthenticatedEmail();
+        //TODO UserDto'yu class yaparak setEmail yapıp dönebilirim.
     }
 
     @GetMapping("/products")

@@ -11,7 +11,7 @@ public interface ProductService {
      Product findByName(String name);
      List<Product> findAll();
      Product findById(Long id);
-     Product save(ProductRequest product, Long categoryId);
+     Product save(ProductRequest product);
      Product delete(Long id);
      //TODO - addStock
 

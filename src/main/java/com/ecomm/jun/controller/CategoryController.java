@@ -1,5 +1,6 @@
 package com.ecomm.jun.controller;
 
+import com.ecomm.jun.dto.CategoryDTO;
 import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
@@ -33,8 +34,9 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
-    public Category delete(@PathVariable Long id) {
-        return categoryService.delete(id);
+    public CategoryDTO delete(@PathVariable Long id) {
+        Category category = categoryService.delete(id);
+        return new CategoryDTO(category.getId(), category.getName());
     }
 }
 
