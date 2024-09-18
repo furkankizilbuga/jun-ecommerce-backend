@@ -44,12 +44,12 @@ public class UserServiceImpl implements UserService{
                         new UserException("User with given email could not be found!", HttpStatus.NOT_FOUND));
     }
 
-    @Override
+    /*@Override
     public User findByEmail(EmailRequest email) {
-        return userRepository.findByEmail(email.email())
+        return userRepository.findByEmail(email)
                 .orElseThrow(() ->
                         new UserException("User with given email could not be found!", HttpStatus.NOT_FOUND));
-    }
+    }*/
 
     @Override
     public List<Product> findUserProducts(Long userId) {

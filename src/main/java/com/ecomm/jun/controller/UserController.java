@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @GetMapping("/findbyemail")
-    public UserDto findByEmail(@Valid @RequestBody EmailRequest email) {
+    public UserDto findByEmail(@RequestParam String email) {
         return DtoConvertor.userDtoConvertor(userService.findByEmail(email));
     }
 

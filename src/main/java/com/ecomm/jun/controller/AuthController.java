@@ -2,7 +2,6 @@ package com.ecomm.jun.controller;
 
 import com.ecomm.jun.dto.RegisterResponse;
 import com.ecomm.jun.dto.UserRequest;
-import com.ecomm.jun.entity.User;
 import com.ecomm.jun.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;

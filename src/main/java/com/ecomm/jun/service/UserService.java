@@ -12,7 +12,7 @@ public interface UserService extends UserDetailsService {
 
     List<User> findAll();
     User findById(Long id);
-    User findByEmail(EmailRequest email);
+    //User findByEmail(EmailRequest email);
     User findByEmail(String email);
     List<Product> findUserProducts(Long userId);
     User save(User user);

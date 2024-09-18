@@ -36,6 +36,8 @@ public class Product {
     @Min(0)
     private Double rating;
 
+    private Double price;
+
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private Inventory inventory;
 
