@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -82,14 +83,14 @@ class JunApplicationTests {
 
 	@Test
 	@DisplayName("Controller Test")
-	void findByIdTest() {
+	void findByIdTest() throws Exception {
 
 		when(productService.findById(1L)).thenReturn(product);
 
 		mockMvc.perform(get("/shop/1"))
 				.andExpect(status().isOk())
-				.andExpect()
-
+				.andExpect(jsonPath("$.name").value("Test ürünü"))
+				.andExpect(jsonPath("$.price").value(15.0));
 	}
 
 
