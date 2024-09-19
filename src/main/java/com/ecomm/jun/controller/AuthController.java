@@ -22,4 +22,26 @@ public class AuthController {
         return new RegisterResponse(user.getEmail(), "Registered successfully!");
     }
 
+    @PostMapping("/register/authority")
+    @ResponseStatus(HttpStatus.CREATED)
+    public RegisterResponse registerAdmin(@Valid @RequestBody UserRequest user) {
+        authenticationService.register(user);
+        return new RegisterResponse(user.getEmail(), "Registered as admin successfully!");
+    }
+
+    @GetMapping("/admin")
+    public void admin() {
+        System.out.println("Welcome admin");
+    }
+
 }
+
+/*
+
+test@test.com
+1234643
+
+
+
+
+ */

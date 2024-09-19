@@ -56,5 +56,36 @@ public class AuthenticationService {
         userRepository.save(user);
     }
 
+    public void registerAdmin(UserRequest requestedUser) {
+        Optional<User> userOptional = userRepository.findByEmail(requestedUser.getEmail());
+
+        if(userOptional.isPresent()) {
+            throw new UserException("User with given email already exists!", HttpStatus.BAD_REQUEST);
+        }
+
+        String encodedPassword = passwordEncoder.encode(requestedUser.getPassword());
+
+        List<Authority> authorities = new ArrayList<>();
+
+        Optional<Authority> authority = authorityRepository.findByAuthority(Role.ADMIN);
+
+        if(authority.isEmpty()) {
+            Authority admin = new Authority();
+            admin.setAuthority(Role.ADMIN);
+            authorityRepository.save(admin);
+            authorities.add(admin);
+        } else {
+            authorities.add(authority.get());
+        }
+
+        User user = new User();
+        user.setEmail(requestedUser.getEmail());
+        user.setPassword(encodedPassword);
+        user.setCreatedAt(LocalDateTime.now());
+        user.setAuthorities(authorities);
+
+        userRepository.save(user);
+    }
+
 
 }
