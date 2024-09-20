@@ -25,7 +25,7 @@ public class AuthController {
     @PostMapping("/register/authority")
     @ResponseStatus(HttpStatus.CREATED)
     public RegisterResponse registerAdmin(@Valid @RequestBody UserRequest user) {
-        authenticationService.register(user);
+        authenticationService.registerAdmin(user);
         return new RegisterResponse(user.getEmail(), "Registered as admin successfully!");
     }
 
@@ -34,14 +34,5 @@ public class AuthController {
         System.out.println("Welcome admin");
     }
 
+
 }
-
-/*
-
-test@test.com
-1234643
-
-
-
-
- */

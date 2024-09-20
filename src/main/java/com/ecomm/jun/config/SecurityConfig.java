@@ -23,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.springframework.security.authorization.AuthenticatedAuthorizationManager.anonymous;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -57,12 +59,11 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
-                    //auth.requestMatchers("/**").permitAll();
-                    auth.requestMatchers("/admin").hasAnyAuthority(Role.ADMIN.name());
-                    auth.anyRequest().permitAll();
-                    //auth.anyRequest().authenticated();
+                    auth.requestMatchers("/register/authority").hasAuthority(Role.USER.name());
+                    auth.requestMatchers("/admin").hasAuthority(Role.ADMIN.name());
+                    auth.requestMatchers("/**").permitAll();
                 })
-                .formLogin(Customizer.withDefaults())
+                .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .build();
     }
