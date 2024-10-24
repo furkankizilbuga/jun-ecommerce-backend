@@ -21,10 +21,8 @@ public class ProductServiceImpl implements ProductService{
     private CategoryService categoryService;
 
     @Override
-    public Product findByName(String name) {
-        return productRepository.findByName(name)
-                .orElseThrow(() ->
-                    new ProductException("Product with given name could not be found!", HttpStatus.NOT_FOUND));
+    public List<Product> findByName(String name) {
+        return productRepository.findByName(name);
     }
 
     @Override

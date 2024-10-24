@@ -13,6 +13,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.email = :email")
     Optional<User> findByEmail(String email);
 
-    @Query(value = "SELECT * FROM product INNER JOIN user_product ON product_id = user_product.product_id WHERE user_product.user_id = :userId", nativeQuery = true)
+    @Query("SELECT p FROM Product p JOIN User u ON p.id IN (SELECT up.productId FROM UserProduct up WHERE up.userId = :userId)")
     List<Product> findUserProducts(Long userId);
+
 }

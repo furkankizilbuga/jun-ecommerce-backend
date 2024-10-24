@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface ProductService {
 
-     Product findByName(String name);
+     List<Product> findByName(String name);
      List<Product> findAll();
      Product findById(Long id);
      Product save(ProductRequest product);

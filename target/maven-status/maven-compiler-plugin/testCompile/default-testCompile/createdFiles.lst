@@ -1,1 +1,3 @@
 com\ecomm\jun\JunApplicationTests.class
+com\ecomm\jun\repository\ProductRepositoryTest.class
+com\ecomm\jun\repository\UserRepositoryTest.class

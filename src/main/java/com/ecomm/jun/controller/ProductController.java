@@ -22,7 +22,7 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public Product findByName(@RequestBody String name) {
+    public List<Product> findByName(@RequestBody String name) {
         return productService.findByName(name);
     }
 
