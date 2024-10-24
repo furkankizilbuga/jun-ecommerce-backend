@@ -21,12 +21,8 @@ class ProductRepositoryTest {
 
     @Autowired
     private ProductRepository productRepository;
-    private Product product;
 
-    /*@Autowired
-    public ProductRepositoryTest(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }*/
+    private Product product;
 
     @BeforeEach
     void setup() {

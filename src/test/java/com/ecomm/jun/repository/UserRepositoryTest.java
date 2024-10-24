@@ -22,9 +22,6 @@ class UserRepositoryTest {
     @Autowired
     private ProductRepository productRepository;
 
-    @Autowired
-    private AuthorityRepository authorityRepository;
-
     private User user;
 
 
@@ -41,12 +38,6 @@ class UserRepositoryTest {
         List<Product> products = new ArrayList<>();
         products.add(product);
 
-        Authority authority = new Authority();
-        authority.setAuthority(Role.ADMIN);
-        authorityRepository.save(authority);
-
-        List<Authority> authorities = new ArrayList<>();
-        authorities.add(authority);
 
         user = new User();
         user.setPassword("1234567");
@@ -55,7 +46,6 @@ class UserRepositoryTest {
         user.setLastName("User");
         user.setCreatedAt(LocalDateTime.now());
         user.setProducts(products);
-        user.setAuthorities(authorities);
         userRepository.save(user);
     }
 
@@ -72,7 +62,7 @@ class UserRepositoryTest {
 
     @Test
     void findUserProducts() {
-        //Act
+       //Act
         List<Product> userProducts = userRepository.findUserProducts(user.getId());
 
         //Assert

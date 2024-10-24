@@ -5,6 +5,7 @@ import com.ecomm.jun.dto.UserRequest;
 import com.ecomm.jun.service.AuthenticationService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
