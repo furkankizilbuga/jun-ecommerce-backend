@@ -13,7 +13,5 @@ public interface ProductService {
      Product findById(Long id);
      Product save(ProductRequest product);
      Product delete(Long id);
-     //TODO - addStock
-
 }
 

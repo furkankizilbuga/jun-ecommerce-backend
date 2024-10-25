@@ -4,6 +4,7 @@ import com.ecomm.jun.entity.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -55,13 +56,17 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity.cors().configurationSource(corsConfigurationSource());
         return httpSecurity
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> {
+                    auth.requestMatchers(HttpMethod.GET, "/product").permitAll();
+                    auth.requestMatchers(HttpMethod.POST, "/product").hasAuthority(Role.ADMIN.name());
+                    auth.requestMatchers(HttpMethod.GET, "/product/findbyname").permitAll();
+                    auth.requestMatchers("/product/**").authenticated();
                     auth.requestMatchers("/register/authority").hasAuthority(Role.USER.name());
                     auth.requestMatchers("/admin").hasAuthority(Role.ADMIN.name());
-                    auth.requestMatchers("/**").permitAll();
+                    auth.anyRequest().authenticated();
                 })
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
