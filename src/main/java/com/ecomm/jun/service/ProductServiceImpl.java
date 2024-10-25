@@ -8,6 +8,8 @@ import com.ecomm.jun.exceptions.ProductException;
 import com.ecomm.jun.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +60,7 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Product delete(Long id) {
         Product product = findById(id);
-        productRepository.delete(product);
+        productRepository.deleteById(id);
         return product;
     }
 }
