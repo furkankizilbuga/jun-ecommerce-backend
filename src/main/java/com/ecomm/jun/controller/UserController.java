@@ -3,6 +3,7 @@ package com.ecomm.jun.controller;
 import com.ecomm.jun.dto.DtoConvertor;
 import com.ecomm.jun.dto.EmailRequest;
 import com.ecomm.jun.dto.UserDto;
+import com.ecomm.jun.dto.UserRequest;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.service.UserService;
@@ -51,7 +52,13 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto saveUser(@Valid @RequestBody User user) {
+    public UserDto saveUser(@Valid @RequestBody UserRequest request) {
+        User user = new User();
+        user.setPassword(request.getPassword());
+        user.setEmail(request.getEmail());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+
         return DtoConvertor.userDtoConvertor(userService.save(user));
     }
 

@@ -1,6 +1,7 @@
 package com.ecomm.jun.controller;
 
 import com.ecomm.jun.dto.UserDto;
+import com.ecomm.jun.dto.UserRequest;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.exceptions.UserException;
@@ -23,6 +24,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -123,7 +125,15 @@ class UserControllerTest {
     }
 
     @Test
-    void getAuthenticatedEmail() {
+    void getAuthenticatedEmail() throws Exception {
+        when(userService.getAuthenticatedEmail()).thenReturn(user.getEmail());
+
+        mockMvc.perform(get("/user/email-auth")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string("mail@test.com"));
+
+        verify(userService).getAuthenticatedEmail();
     }
 
     @Test
@@ -153,17 +163,23 @@ class UserControllerTest {
 
     @Test
     void saveUser() throws Exception {
-        when(userService.save(user)).thenReturn(user);
+        UserRequest userRequest = new UserRequest();
+        userRequest.setPassword("1234567");
+        userRequest.setEmail("mail@test.com");
+        userRequest.setFirstName("Test");
+        userRequest.setLastName("User");
+
+        when(userService.save(any(User.class))).thenReturn(user);
 
         mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonToString(user))
+                        .content(jsonToString(userRequest))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()));
 
-        verify(userService).save(user);
+        verify(userService).save(any(User.class));
     }
 
     @Test
@@ -179,19 +195,13 @@ class UserControllerTest {
         verify(userService).delete(1L);
     }
 
-    private static String formatDate(LocalDateTime dateTime) {
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-        return dateTime.format(formatter);
-    }
 
-    public static String jsonToString(User user) {
-        return "{"
-                + "\"id\":" + user.getId() + ","
-                + "\"email\":\"" + user.getEmail() + "\","
-                + "\"firstName\":\"" + user.getFirstName() + "\","
-                + "\"lastName\":\"" + user.getLastName() + "\","
-                + "\"createdAt\":\"" + formatDate(user.getCreatedAt()) + "\""
-                + "}";
+    public static String jsonToString(Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
