@@ -8,6 +8,7 @@ import com.ecomm.jun.entity.User;
 import com.ecomm.jun.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,23 +33,24 @@ public class UserController {
         return DtoConvertor.userDtoConvertor(userService.findById(id));
     }
 
-    @GetMapping("/findbyemail")
+    @GetMapping("/email")
     public UserDto findByEmail(@RequestParam String email) {
         return DtoConvertor.userDtoConvertor(userService.findByEmail(email));
     }
 
-    @GetMapping("/email")
+    @GetMapping("/email-auth")
     public String getAuthenticatedEmail() {
         return userService.getAuthenticatedEmail();
         //TODO UserDto'yu class yaparak setEmail yapıp dönebilirim.
     }
 
-    @GetMapping("/products")
-    public List<Product> findUserProduct(Long userId) {
+    @GetMapping("/product")
+    public List<Product> findUserProduct(@RequestParam Long userId) {
         return userService.findUserProducts(userId);
     }
 
-    @PostMapping("/save")
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto saveUser(@Valid @RequestBody User user) {
         return DtoConvertor.userDtoConvertor(userService.save(user));
     }

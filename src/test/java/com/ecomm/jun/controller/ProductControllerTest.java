@@ -1,25 +1,19 @@
 package com.ecomm.jun.controller;
 
-import com.ecomm.jun.config.SecurityConfig;
 import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.exceptions.ProductException;
-import com.ecomm.jun.service.AuthenticationService;
 import com.ecomm.jun.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -29,7 +23,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -131,8 +124,8 @@ class ProductControllerTest {
 
 
         mockMvc.perform(MockMvcRequestBuilders.post("/product")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonToString(productRequest))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(jsonToString(productRequest))
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").hasJsonPath())
