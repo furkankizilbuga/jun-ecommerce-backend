@@ -65,12 +65,9 @@ public class UserServiceImpl implements UserService{
     @Transactional
     @Override
     public User delete(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if(user.isPresent()) {
-            userRepository.delete(user.get());
-            return user.get();
-        }
-        throw new UserException("User with given ID could not be found!", HttpStatus.NOT_FOUND);
+        User user = findById(id);
+        userRepository.deleteById(id);
+        return user;
     }
 
     @Override
