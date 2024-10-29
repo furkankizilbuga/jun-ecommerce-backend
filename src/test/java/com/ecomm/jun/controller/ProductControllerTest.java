@@ -25,6 +25,7 @@ import java.util.Set;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 //Integration Test
@@ -71,7 +72,8 @@ class ProductControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/product"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
 
 
         verify(productService).findAll();

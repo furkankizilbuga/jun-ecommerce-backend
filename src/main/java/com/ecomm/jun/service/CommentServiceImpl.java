@@ -35,6 +35,16 @@ public class CommentServiceImpl implements CommentService {
         );
     }
 
+    @Override
+    public List<Comment> findByUserId(Long userId) {
+        return commentRepository.findByUserId(userId);
+    }
+
+    @Override
+    public List<Comment> findByProductId(Long productId) {
+        return commentRepository.findByProductId(productId);
+    }
+
     @Transactional
     @Override
     public Comment save(CommentRequest request, Long productId) {

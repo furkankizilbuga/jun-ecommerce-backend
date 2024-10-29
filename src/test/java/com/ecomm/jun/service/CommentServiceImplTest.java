@@ -14,6 +14,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -38,6 +40,7 @@ class CommentServiceImplTest {
     private Comment comment;
     private Product product;
     private User user;
+    private List<Comment> commentList;
 
     @BeforeEach
     void setup() {
@@ -55,6 +58,10 @@ class CommentServiceImplTest {
         comment.setCreatedAt(LocalDate.now());
         comment.setProduct(product);
         comment.setUser(user);
+
+        commentList = new ArrayList<>();
+        commentList.add(comment);
+
     }
 
     @Test
@@ -73,6 +80,29 @@ class CommentServiceImplTest {
         assertNotNull(found);
         assertEquals(comment.getId(), found.getId());
         assertEquals(comment.getContent(), found.getContent());
+    }
+
+    @Test
+    void findByUserId() {
+        when(commentRepository.findByUserId(user.getId())).thenReturn(commentList);
+
+        List<Comment> foundList = commentService.findByUserId(user.getId());
+
+        verify(commentRepository).findByUserId(user.getId());
+        assertNotNull(foundList);
+        assertEquals(comment.getId(), foundList.get(0).getId());
+        assertEquals(comment.getContent(), foundList.get(0).getContent());
+    }
+
+    @Test
+    void findByProductId() {
+        when(commentRepository.findByProductId(product.getId())).thenReturn(commentList);
+
+        List<Comment> foundList = commentService.findByProductId(product.getId());
+
+        verify(commentRepository).findByProductId(product.getId());
+        assertEquals(comment.getId(), foundList.get(0).getId());
+        assertEquals(comment.getContent(), foundList.get(0).getContent());
     }
 
     @Test

@@ -9,7 +9,8 @@ public interface CommentService {
 
     List<Comment> findAll();
     Comment findById(Long id);
-    //TODO -  User kısmına taşınacak | List<Comment> findByUserId(Long userId);
+    List<Comment> findByUserId(Long userId);
+    List<Comment> findByProductId(Long productId);
     Comment save(CommentRequest request, Long productId);
     Comment delete(Long id);
 
