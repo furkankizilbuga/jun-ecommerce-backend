@@ -17,7 +17,7 @@ public class InventoryServiceImpl implements InventoryService{
     private InventoryRepository inventoryRepository;
 
     @Override
-    public Inventory getInventory(Long productId) {
+    public Inventory findByProductId(Long productId) {
         return inventoryRepository.findByProductId(productId)
                 .orElseThrow(() ->
                         new InventoryException("Could not find a product inventory with given ID!", HttpStatus.NOT_FOUND));

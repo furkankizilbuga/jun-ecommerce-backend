@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 public interface InventoryService {
 
-    Inventory getInventory(Long productId);
+    Inventory findByProductId(Long productId);
     Inventory update(Long productId, int newQuantity);
 
 }
