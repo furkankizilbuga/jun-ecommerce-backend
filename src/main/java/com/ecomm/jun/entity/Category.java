@@ -42,4 +42,11 @@ public class Category {
             product.getCategories().add(this);
         }
     }
+
+    @PreRemove
+    private void removeCategoryFromProducts() {
+        for (Product product : products) {
+            product.getCategories().remove(this);
+        }
+    }
 }
