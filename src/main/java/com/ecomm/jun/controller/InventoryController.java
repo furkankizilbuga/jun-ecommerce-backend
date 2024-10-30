@@ -7,14 +7,14 @@ import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/shop/{categoryId}/products")
+@RequestMapping("/inventory")
 @AllArgsConstructor
 public class InventoryController {
 
     private InventoryService inventoryService;
 
     @GetMapping("/{productId}")
-    public Inventory getInventory(@PathVariable Long productId) {
+    public Inventory findByProductId(@PathVariable Long productId) {
         return inventoryService.findByProductId(productId);
     }
 
