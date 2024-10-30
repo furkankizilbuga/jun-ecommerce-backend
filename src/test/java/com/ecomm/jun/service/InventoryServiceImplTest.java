@@ -36,10 +36,12 @@ class InventoryServiceImplTest {
         inventory.setId(1L);
         inventory.setQuantity(1);
 
+
         product = new Product();
         product.setId(1L);
         product.setName("Test Product");
         product.setInventory(inventory);
+        inventory.setProduct(product);
     }
 
     @Test
@@ -50,10 +52,17 @@ class InventoryServiceImplTest {
 
         verify(inventoryRepository).findByProductId(product.getId());
         assertEquals(found.getId(), inventory.getId());
-        assertEquals(found.getProduct(), product);
+        assertEquals(found.getProduct().getName(), product.getName());
     }
 
     @Test
     void update() {
+        when(inventoryRepository.findByProductId(product.getId())).thenReturn(Optional.ofNullable(inventory));
+
+        Inventory found = inventoryService.update(product.getId(), 2);
+
+        verify(inventoryRepository).findByProductId(product.getId());
+        assertEquals(found.getQuantity(), 2);
+        assertEquals(found.getId(), product.getInventory().getId());
     }
 }
