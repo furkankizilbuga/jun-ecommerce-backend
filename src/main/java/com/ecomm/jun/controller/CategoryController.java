@@ -7,6 +7,7 @@ import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.service.CategoryService;
 import com.ecomm.jun.service.ProductService;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class CategoryController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public Category save(@RequestBody CategoryRequest category) {
         return categoryService.save(category);
     }
