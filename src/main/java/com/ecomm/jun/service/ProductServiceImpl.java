@@ -1,6 +1,5 @@
 package com.ecomm.jun.service;
 
-import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
@@ -8,8 +7,6 @@ import com.ecomm.jun.exceptions.ProductException;
 import com.ecomm.jun.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +39,10 @@ public class ProductServiceImpl implements ProductService{
     @Transactional
     @Override
     public Product save(ProductRequest request) {
+
+        if(request.name().isEmpty() || request.price() < 0 || request.rating() < 0 ) {
+            throw new ProductException("Bad Request!", HttpStatus.BAD_REQUEST);
+        }
 
         Product product = new Product();
         product.setName(request.name());
