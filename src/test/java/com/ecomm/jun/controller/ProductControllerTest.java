@@ -148,11 +148,11 @@ class ProductControllerTest {
     @Test
     void delete() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", 1L)
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", testProduct.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").hasJsonPath())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testProduct.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(testProduct.getName()));
 
     }
 
