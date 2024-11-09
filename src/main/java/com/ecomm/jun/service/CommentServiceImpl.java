@@ -3,6 +3,7 @@ package com.ecomm.jun.service;
 import com.ecomm.jun.dto.CommentRequest;
 import com.ecomm.jun.entity.Comment;
 import com.ecomm.jun.entity.Product;
+import com.ecomm.jun.entity.Role;
 import com.ecomm.jun.entity.User;
 import com.ecomm.jun.exceptions.CommentException;
 import com.ecomm.jun.repository.CommentRepository;
@@ -49,6 +50,10 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public Comment save(CommentRequest request, Long productId) {
 
+        if(request.content().isEmpty()) {
+            throw new CommentException("Please write your comment before you submit!", HttpStatus.BAD_REQUEST);
+        }
+
         Product product = productService.findById(productId);
 
         String loggedEmail = userService.getAuthenticatedEmail();
@@ -70,4 +75,5 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.delete(toBeDeleted);
         return toBeDeleted;
     }
+
 }
