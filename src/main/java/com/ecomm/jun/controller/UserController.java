@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -42,7 +43,6 @@ public class UserController {
     @GetMapping("/email-auth")
     public String getAuthenticatedEmail() {
         return userService.getAuthenticatedEmail();
-        //TODO UserDto'yu class yaparak setEmail yapıp dönebilirim.
     }
 
     @GetMapping("/product")
@@ -58,6 +58,7 @@ public class UserController {
         user.setEmail(request.getEmail());
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
+        user.setCreatedAt(LocalDateTime.now());
 
         return DtoConvertor.userDtoConvertor(userService.save(user));
     }

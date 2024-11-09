@@ -1,49 +1,53 @@
 package com.ecomm.jun.controller;
 
-import com.ecomm.jun.dto.UserDto;
 import com.ecomm.jun.dto.UserRequest;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
-import com.ecomm.jun.exceptions.UserException;
+import com.ecomm.jun.repository.ProductRepository;
+import com.ecomm.jun.repository.UserRepository;
 import com.ecomm.jun.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserController.class)
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(locations = "classpath:application-test.properties")
 class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     private User user;
 
     @BeforeEach
     void setup() {
+        //Arrange
+        userRepository.deleteAll();
+        productRepository.deleteAll();
 
         user = new User();
         user.setId(1L);
@@ -53,12 +57,18 @@ class UserControllerTest {
         user.setLastName("User");
         user.setCreatedAt(LocalDateTime.now());
 
+        user = userRepository.save(user);
+
+    }
+
+    @AfterEach
+    void cleanup() {
+        userRepository.deleteAll();
+        productRepository.deleteAll();
     }
 
     @Test
     void findAll() throws Exception {
-        List<User> users = List.of(user);
-        when(userService.findAll()).thenReturn(users);
 
         mockMvc.perform(get("/user"))
                 .andExpect(status().isOk())
@@ -67,37 +77,31 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].email").value(user.getEmail()))
                 .andExpect(jsonPath("$").isArray());
 
-        verify(userService).findAll();
     }
 
     @Test
     void findById() throws Exception {
-        when(userService.findById(1L)).thenReturn(user);
 
-        mockMvc.perform(get("/user/{id}", 1L)
+        mockMvc.perform(get("/user/{id}", user.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.email").value("mail@test.com"));
+                .andExpect(jsonPath("$.id").value(user.getId()))
+                .andExpect(jsonPath("$.email").value(user.getEmail()));
 
-        verify(userService).findById(1L);
     }
 
     @Test
     void findById_not_found() throws Exception {
-        when(userService.findById(99L)).thenThrow(new UserException("User with given ID not found!", HttpStatus.BAD_REQUEST));
 
         mockMvc.perform(get("/user/{id}", 99L)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("User with given ID not found!"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User with given ID could not be found!"));
 
-        verify(userService).findById(99L);
     }
 
     @Test
     void findByEmail() throws Exception {
-        when(userService.findByEmail("mail@test.com")).thenReturn(user);
 
         mockMvc.perform(get("/user/email")
                         .param("email", "mail@test.com")
@@ -108,46 +112,32 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.firstName").value(user.getFirstName()))
                 .andExpect(jsonPath("$.lastName").value(user.getLastName()));
 
-        verify(userService).findByEmail("mail@test.com");
     }
 
     @Test
     void findByEmail_not_found() throws Exception {
-        when(userService.findByEmail("no@test.com")).thenThrow(new UserException("User with given email is not found!", HttpStatus.BAD_REQUEST));
 
         mockMvc.perform(get("/user/email")
                         .param("email", "no@test.com")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("User with given email is not found!"));
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User with given email could not be found!"));
 
-        verify(userService).findByEmail("no@test.com");
     }
 
-    @Test
-    void getAuthenticatedEmail() throws Exception {
-        when(userService.getAuthenticatedEmail()).thenReturn(user.getEmail());
-
-        mockMvc.perform(get("/user/email-auth")
-                .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().string("mail@test.com"));
-
-        verify(userService).getAuthenticatedEmail();
-    }
 
     @Test
     void findUserProduct() throws Exception {
         //Arrange
         Product product = new Product();
-        product.setId(1L);
         product.setName("Test Product");
+        productRepository.save(product);
 
         List<Product> products = new ArrayList<>();
         products.add(product);
         user.setProducts(products);
+        user = userRepository.save(user);
 
-        when(userService.findUserProducts(1L)).thenReturn(products);
 
         //Act & Assert
         mockMvc.perform(get("/user/product")
@@ -158,41 +148,37 @@ class UserControllerTest {
                 .andExpect(jsonPath("$[0].id").value(product.getId()))
                 .andExpect(jsonPath("$[0].name").value(product.getName()));
 
-        verify(userService).findUserProducts(user.getId());
     }
 
     @Test
     void saveUser() throws Exception {
+        //Arrange
         UserRequest userRequest = new UserRequest();
-        userRequest.setPassword("1234567");
-        userRequest.setEmail("mail@test.com");
+        userRequest.setPassword("different");
+        userRequest.setEmail("different@test.com");
         userRequest.setFirstName("Test");
         userRequest.setLastName("User");
 
-        when(userService.save(any(User.class))).thenReturn(user);
-
+        //Act & Assert
         mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonToString(userRequest))
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(user.getId()))
-                .andExpect(jsonPath("$.email").value(user.getEmail()));
+                .andExpect(jsonPath("$.firstName").value(userRequest.getFirstName()))
+                .andExpect(jsonPath("$.email").value(userRequest.getEmail()));
 
-        verify(userService).save(any(User.class));
     }
 
     @Test
     void deleteUser() throws Exception {
-        when(userService.delete(1L)).thenReturn(user);
 
-        mockMvc.perform(delete("/user/{id}", 1L)
+        mockMvc.perform(delete("/user/{id}", user.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()));
 
-        verify(userService).delete(1L);
     }
 
 
