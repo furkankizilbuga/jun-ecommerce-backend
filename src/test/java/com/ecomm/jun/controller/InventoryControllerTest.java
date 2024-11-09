@@ -3,33 +3,40 @@ package com.ecomm.jun.controller;
 import com.ecomm.jun.dto.InventoryRequest;
 import com.ecomm.jun.entity.Inventory;
 import com.ecomm.jun.entity.Product;
-import com.ecomm.jun.service.InventoryServiceImpl;
+import com.ecomm.jun.repository.InventoryRepository;
+import com.ecomm.jun.repository.ProductRepository;
+import com.ecomm.jun.service.InventoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(InventoryController.class)
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(locations = "classpath:application-test.properties")
 class InventoryControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private InventoryServiceImpl inventoryService;
+    @Autowired
+    private InventoryService inventoryService;
+
+    @Autowired
+    private InventoryRepository inventoryRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     private Inventory inventory;
     private Product product;
@@ -37,28 +44,38 @@ class InventoryControllerTest {
     @BeforeEach
     void setup() {
 
+        inventoryRepository.deleteAll();
+        productRepository.deleteAll();
+
         inventory = new Inventory();
-        inventory.setId(1L);
         inventory.setQuantity(1);
 
         product = new Product();
-        product.setId(1L);
         product.setName("Test Product");
         product.setInventory(inventory);
+
+        product = productRepository.save(product);
+
         inventory.setProduct(product);
 
+        inventory = inventoryRepository.save(inventory);
+
+    }
+
+    @AfterEach
+    void cleanup() {
+        inventoryRepository.deleteAll();
+        productRepository.deleteAll();
     }
 
     @Test
     void findByProductId() throws Exception {
-        when(inventoryService.findByProductId(product.getId())).thenReturn(inventory);
 
         mockMvc.perform(get("/inventory/{productId}", product.getId()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(inventory.getId()))
                 .andExpect(jsonPath("$.quantity").value(inventory.getQuantity()));
 
-        verify(inventoryService).findByProductId(product.getId());
     }
 
     @Test
@@ -68,9 +85,9 @@ class InventoryControllerTest {
         int newQuantity = 2;
         inventory.setQuantity(newQuantity);
 
-        InventoryRequest request = new InventoryRequest(2);
+        inventory = inventoryRepository.save(inventory);
 
-        when(inventoryService.update(productId, newQuantity)).thenReturn(inventory);
+        InventoryRequest request = new InventoryRequest(2);
 
         // Act & Assert
         mockMvc.perform(put("/inventory/{productId}", productId)
@@ -81,7 +98,6 @@ class InventoryControllerTest {
                 .andExpect(jsonPath("$.id").value(inventory.getId()))
                 .andExpect(jsonPath("$.quantity").value(inventory.getQuantity()));
 
-        verify(inventoryService).update(productId, newQuantity);
     }
 
     public static String jsonToString(Object object) {
