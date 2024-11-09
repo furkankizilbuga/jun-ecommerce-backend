@@ -1,10 +1,16 @@
 package com.ecomm.jun.controller;
 
+import com.ecomm.jun.dto.CategoryRequest;
+import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.dto.UserRequest;
+import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.entity.User;
+import com.ecomm.jun.repository.CategoryRepository;
 import com.ecomm.jun.repository.ProductRepository;
 import com.ecomm.jun.repository.UserRepository;
+import com.ecomm.jun.service.CategoryService;
+import com.ecomm.jun.service.ProductService;
 import com.ecomm.jun.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -20,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,14 +39,25 @@ class UserControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProductService productService;
+
+    @Autowired
+    private CategoryService categoryService;
+
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     private User user;
 
@@ -48,16 +66,16 @@ class UserControllerTest {
         //Arrange
         userRepository.deleteAll();
         productRepository.deleteAll();
+        categoryRepository.deleteAll();
 
         user = new User();
-        user.setId(1L);
         user.setPassword("1234567");
         user.setEmail("mail@test.com");
         user.setFirstName("Test");
         user.setLastName("User");
         user.setCreatedAt(LocalDateTime.now());
 
-        user = userRepository.save(user);
+        user = userService.save(user);
 
     }
 
@@ -65,6 +83,7 @@ class UserControllerTest {
     void cleanup() {
         userRepository.deleteAll();
         productRepository.deleteAll();
+        categoryRepository.deleteAll();
     }
 
     @Test
@@ -129,14 +148,14 @@ class UserControllerTest {
     @Test
     void findUserProduct() throws Exception {
         //Arrange
-        Product product = new Product();
-        product.setName("Test Product");
-        productRepository.save(product);
+        CategoryRequest categoryRequest = new CategoryRequest("Test Category");
+        Category category = categoryService.save(categoryRequest);
 
-        List<Product> products = new ArrayList<>();
-        products.add(product);
-        user.setProducts(products);
-        user = userRepository.save(user);
+        ProductRequest productRequest = new ProductRequest("Test Product", "", 15.0, 5.0, Set.of(category.getId()));
+        Product product = productService.save(productRequest);
+
+        user.setProducts(List.of(product));
+        user = userService.save(user);
 
 
         //Act & Assert
