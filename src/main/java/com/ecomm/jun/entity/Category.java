@@ -36,13 +36,6 @@ public class Category {
     @JsonManagedReference
     private Set<Product> products = new HashSet<>();
 
-    public void addProduct(Product product) {
-        if (product != null) {
-            products.add(product);
-            product.getCategories().add(this);
-        }
-    }
-
     @PreRemove
     private void removeCategoryFromProducts() {
         for (Product product : products) {

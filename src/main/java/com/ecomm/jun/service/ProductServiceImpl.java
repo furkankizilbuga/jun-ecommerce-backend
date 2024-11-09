@@ -48,6 +48,7 @@ public class ProductServiceImpl implements ProductService{
         product.setName(request.name());
         product.setImagePath(request.imagePath());
         product.setPrice(request.price());
+        product.setRating(request.rating());
 
         for(Long categoryId : request.categoryIds()) {
             Category category = categoryService.findById(categoryId);

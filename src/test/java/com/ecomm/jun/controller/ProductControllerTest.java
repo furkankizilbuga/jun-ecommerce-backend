@@ -1,10 +1,12 @@
 package com.ecomm.jun.controller;
 
+import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.dto.ProductRequest;
 import com.ecomm.jun.entity.Category;
 import com.ecomm.jun.entity.Product;
 import com.ecomm.jun.repository.CategoryRepository;
 import com.ecomm.jun.repository.ProductRepository;
+import com.ecomm.jun.service.CategoryService;
 import com.ecomm.jun.service.ProductService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -19,11 +21,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.HashSet;
 import java.util.Set;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 //Integration Test
 
@@ -35,8 +36,13 @@ class ProductControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+
     @Autowired
     private ProductService productService;
+
+    @Autowired
+    private CategoryService categoryService;
+
 
     @Autowired
     private ProductRepository productRepository;
@@ -44,8 +50,9 @@ class ProductControllerTest {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    private Category testCategory;
-    private Product testProduct;
+
+    private Category category;
+    private Product product;
 
     @BeforeEach
     void setup() {
@@ -53,19 +60,11 @@ class ProductControllerTest {
         categoryRepository.deleteAll();
         productRepository.deleteAll();
 
-        testCategory = new Category();
-        testCategory.setId(1L);
-        testCategory.setName("Test Category");
-        testCategory.setProducts(new HashSet<>());
-        testCategory = categoryRepository.save(testCategory);
+        CategoryRequest categoryRequest = new CategoryRequest("Test Category");
+        category = categoryService.save(categoryRequest);
 
-        testProduct = new Product();
-        testProduct.setId(1L);
-        testProduct.setName("Test Product");
-        testProduct.setImagePath("/");
-        testProduct.setPrice(15.0);
-        testProduct.setCategories(new HashSet<>());
-        testProduct = productRepository.save(testProduct);
+        ProductRequest productRequest = new ProductRequest("Test Product", "", 15.0, 5.0, Set.of(category.getId()));
+        product = productService.save(productRequest);
 
     }
 
@@ -92,19 +91,19 @@ class ProductControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/product/findbyname")
                         .param("name", "Test Product"))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").hasJsonPath())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value("Test Product"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(product.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name").value(product.getName()));
 
     }
 
     @Test
     void findById() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/product/{id}", testProduct.getId())
+        mockMvc.perform(MockMvcRequestBuilders.get("/product/{id}", product.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testProduct.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(testProduct.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(product.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(product.getName()));
 
     }
 
@@ -120,23 +119,27 @@ class ProductControllerTest {
 
     @Test
     void save() throws Exception {
-        ProductRequest productRequest = new ProductRequest("Test Product", "/", 15.0, 3.0, Set.of(testCategory.getId()));
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/product")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(jsonToString(productRequest))
-                .accept(MediaType.APPLICATION_JSON))
+        CategoryRequest categoryRequest = new CategoryRequest("Test Category2");
+        Category category2 = categoryService.save(categoryRequest);
+
+        ProductRequest productRequest = new ProductRequest("Test Product2", "", 15.0, 3.0, Set.of(category2.getId()));
+
+        mockMvc.perform(post("/product")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonToString(productRequest))
+                        .characterEncoding("utf-8")
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").hasJsonPath())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product"));
-
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("Test Product2"));
     }
 
     @Test
     void save_bad_request() throws Exception {
         ProductRequest productRequest = new ProductRequest("", null, -1.0, -1.0, null);
 
-        mockMvc.perform(MockMvcRequestBuilders.post("/product")
+        mockMvc.perform(post("/product")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonToString(productRequest)))
                 .andExpect(status().isBadRequest())
@@ -148,11 +151,11 @@ class ProductControllerTest {
     @Test
     void delete() throws Exception {
 
-        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", testProduct.getId())
+        mockMvc.perform(MockMvcRequestBuilders.delete("/product/{id}", product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(testProduct.getId()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(testProduct.getName()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(product.getId()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(product.getName()));
 
     }
 
@@ -160,6 +163,7 @@ class ProductControllerTest {
         try {
             return new ObjectMapper().writeValueAsString(object);
         } catch(Exception e) {
+            System.out.println("hata burda");
             throw new RuntimeException(e);
         }
     }
