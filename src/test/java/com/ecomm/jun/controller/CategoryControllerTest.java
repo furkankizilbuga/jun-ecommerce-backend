@@ -2,65 +2,68 @@ package com.ecomm.jun.controller;
 
 import com.ecomm.jun.dto.CategoryRequest;
 import com.ecomm.jun.entity.Category;
-import com.ecomm.jun.exceptions.CategoryException;
-import com.ecomm.jun.service.CategoryServiceImpl;
+import com.ecomm.jun.repository.CategoryRepository;
+import com.ecomm.jun.service.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
-@WebMvcTest(CategoryController.class)
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
+@TestPropertySource(locations = "classpath:application-test.properties")
 class CategoryControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private CategoryServiceImpl categoryService;
+    @Autowired
+    private CategoryService categoryService;
+
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
 
     private Category category1;
     private Category category2;
-    private List<Category> categoryList;
 
     @BeforeEach
     void setup() {
 
-        category1 = new Category();
-        category1.setId(1L);
-        category1.setName("Test Category");
+        categoryRepository.deleteAll();
 
-        category2 = new Category();
-        category2.setId(2L);
-        category2.setName("Test Category 2");
 
-        categoryList = new ArrayList<>();
-        categoryList.add(category1);
-        categoryList.add(category2);
+        CategoryRequest categoryRequest = new CategoryRequest("Test Category");
+        category1 = categoryService.save(categoryRequest);
+
+        CategoryRequest categoryRequest2 = new CategoryRequest("Test Category2");
+        category2 = categoryService.save(categoryRequest);
+
+    }
+
+    @AfterEach
+    void cleanup() {
+        categoryRepository.deleteAll();
     }
 
     @Test
-    void findAll() throws Exception {
-        when(categoryService.findAll()).thenReturn(categoryList);
+    @Transactional
+     void findAll() throws Exception {
 
         mockMvc.perform(get("/category"))
                 .andExpect(status().isOk())
@@ -69,37 +72,32 @@ class CategoryControllerTest {
                 .andExpect(jsonPath("$[1].id").value(category2.getId()))
                 .andExpect(jsonPath("$").isArray());
 
-        verify(categoryService).findAll();
     }
 
     @Test
+    @Transactional
     void findById() throws Exception {
-        when(categoryService.findById(category1.getId())).thenReturn(category1);
 
         mockMvc.perform(get("/category/{id}", category1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(category1.getId()));
 
-        verify(categoryService).findById(category1.getId());
     }
 
     @Test
     void findById_not_found() throws Exception {
-        when(categoryService.findById(99L)).thenThrow(new CategoryException("Category with given ID is not found!", HttpStatus.BAD_REQUEST));
 
         mockMvc.perform(get("/category/{id}", 99L))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotFound())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.message").value("Category with given ID is not found!"));
+                .andExpect(jsonPath("$.message").value("A category with given ID could not be found!"));
 
-        verify(categoryService).findById(99L);
     }
 
     @Test
     void save() throws Exception {
         CategoryRequest request = new CategoryRequest("Test Category");
-        when(categoryService.save(request)).thenReturn(category1);
 
         mockMvc.perform(post("/category")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -107,22 +105,18 @@ class CategoryControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(category1.getId()))
-                .andExpect(jsonPath("$.name").value(category1.getName()));
+                .andExpect(jsonPath("$.name").value("Test Category"));
 
-        verify(categoryService).save(request);
     }
 
     @Test
     void delete() throws Exception {
-        when(categoryService.delete(category1.getId())).thenReturn(category1);
 
         mockMvc.perform(MockMvcRequestBuilders.delete("/category/{id}", category1.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(category1.getId()))
                 .andExpect(jsonPath("$.name").value(category1.getName()));
 
-        verify(categoryService).delete(category1.getId());
     }
 
     public static String jsonToString(Object object) {
